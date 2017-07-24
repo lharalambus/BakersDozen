@@ -11,6 +11,13 @@ import java.awt.CardLayout;
 import javax.swing.JInternalFrame;
 import javax.swing.ImageIcon;
 import java.awt.SystemColor;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.ListSelectionModel;
@@ -20,23 +27,36 @@ import java.awt.Insets;
 import javax.swing.SwingConstants;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
+
 import javax.swing.Box;
-import java.util.Timer;
-import java.util.TimerTask;
+import javax.swing.Timer;
+import java.awt.event.MouseAdapter; 
+//import java.util.Timer;
+//import java.util.TimerTask;
+
+
 
 public class BakersDozenUI {
 
+	/// game vars
 	private JFrame frame;
-	public Timer timer = new Timer(true);
+	public Timer timer = new Timer(1000,new ActionListener(){
+        public void actionPerformed(ActionEvent e)
+    {
+       incrementTimer();
+    }
+    });;
 	public int score = 0;
 	public int moves = 0;
 	public long elapsedSeconds = 0;
 	
-
+	/// gui controls
 	JLabel lblTime = new JLabel("00:00");
 	JLabel lblMoves = new JLabel("0");
 	JLabel lblScore = new JLabel("0");
-
+	BakersDozenBoard bdboard = new BakersDozenBoard();
+	//JPanel bdboard = new JPanel();
 	
 	/**
 	 * Launch the application.
@@ -62,15 +82,21 @@ public class BakersDozenUI {
 	public BakersDozenUI() {
 		initialize();
 		
-		timer.schedule(new TimerTask() {
-
-            @Override
-            public void run() {
-                incrementTimer();
-            }
-        }, 1000);
+		frame.getContentPane().add(bdboard);
+      frame.pack();
+      frame.setLocationRelativeTo(null);
+      frame.setVisible(true);
+		// Dealing (and shuffling) cards
+		Deal();
 		
-		DisplayGameOver();
+		//frame = new JFrame("Baker's Dozen");
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);		
+		
+		// starting play timer
+		timer.start();
+		bdboard.setEnabled(true);
+		
+		
 		
 	}
 	
@@ -90,14 +116,139 @@ public class BakersDozenUI {
 		score = 0;
 		moves = 0;
 		elapsedSeconds = 0;
+		Deal();
 	}
+	
+	// todo: create array of cards, scramble, then assign to values in tboard
+	public void Deal() {
+		//System.out.println("Deal-1");
+		Card[] cards = new Card[52];
+		
+		cards[0] = new Card(1, "diamond");
+		cards[1] = new Card(2, "diamond");
+		cards[2] = new Card(3, "diamond");
+		cards[3] = new Card(4, "diamond");
+		cards[4] = new Card(5, "diamond");
+		cards[5] = new Card(6, "diamond");
+		cards[6] = new Card(7, "diamond");
+		cards[7] = new Card(8, "diamond");
+		cards[8] = new Card(9, "diamond");
+		cards[9] = new Card(10, "diamond");
+		cards[10] = new Card(11, "diamond");
+		cards[11] = new Card(12, "diamond");
+		cards[12] = new Card(13, "diamond");
 
+		//System.out.println("Deal-2");
+
+		cards[13] = new Card(1, "heart");
+		cards[14] = new Card(2, "heart");
+		cards[15] = new Card(3, "heart");
+		cards[16] = new Card(4, "heart");
+		cards[17] = new Card(5, "heart");
+		cards[18] = new Card(6, "heart");
+		cards[19] = new Card(7, "heart");
+		cards[20] = new Card(8, "heart");
+		cards[21] = new Card(9, "heart");
+		cards[22] = new Card(10, "heart");
+		cards[23] = new Card(11, "heart");
+		cards[24] = new Card(12, "heart");
+		cards[25] = new Card(13, "heart");
+
+		//System.out.println("Deal-3");
+
+		cards[26] = new Card(1, "spade");
+		cards[27] = new Card(2, "spade");
+		cards[28] = new Card(3, "spade");
+		cards[29] = new Card(4, "spade");
+		cards[30] = new Card(5, "spade");
+		cards[31] = new Card(6, "spade");
+		cards[32] = new Card(7, "spade");
+		cards[33] = new Card(8, "spade");
+		cards[34] = new Card(9, "spade");
+		cards[35] = new Card(10, "spade");
+		cards[36] = new Card(11, "spade");
+		cards[37] = new Card(12, "spade");
+		cards[38] = new Card(13, "spade");
+		
+
+		//System.out.println("Deal-4");
+		cards[39] = new Card(1, "club");
+		cards[40] = new Card(2, "club");
+		cards[41] = new Card(3, "club");
+		cards[42] = new Card(4, "club");
+		cards[43] = new Card(5, "club");
+		cards[44] = new Card(6, "club");
+		cards[45] = new Card(7, "club");
+		cards[46] = new Card(8, "club");
+		cards[47] = new Card(9, "club");
+		cards[48] = new Card(10, "club");
+		cards[49] = new Card(11, "club");
+		cards[50] = new Card(12, "club");
+		cards[51] = new Card(13, "club");
+		
+		// assign values to cards
+
+		//System.out.println("rank=" + cards[0].rank);
+		//System.out.println("suit=" + cards[0].suit);
+		
+
+		//System.out.println("rank=" + cards[13].rank);
+		//System.out.println("suit=" + cards[13].suit);
+		
+
+		//System.out.println("rank=" + cards[26].rank);
+		//System.out.println("suit=" + cards[26].suit);
+
+		//System.out.println("rank=" + cards[39].rank);
+		//System.out.println("suit=" + cards[39].suit);
+		//System.out.println("Deal-5");
+		cards = Shuffle(cards); // shuffling
+
+		//System.out.println("rank=" + cards[0].rank);
+		//System.out.println("suit=" + cards[0].suit);
+		//System.out.println("Deal-6");
+		List<Card>[] tBoard = new ArrayList[13]; // creating board layout
+
+		//System.out.println("Deal-7");
+		// dealing cards
+		for(int x = 0; x < 13; x++) {
+			tBoard[x] = new ArrayList<Card>();
+			for(int y = 0; y < 4; y ++) {
+			//	System.out.println("Dealing card #" + (4*x + y));
+				tBoard[x].add(cards[4*x + y]);
+			}
+		}
+
+		//System.out.println("Deal-8");
+		
+		bdboard = new BakersDozenBoard(tBoard);
+
+		//System.out.println("Deal-9");
+	}
+	
+	public Card[] Shuffle(Card[] cards)
+	   {
+	       Random rnd = new Random();
+	       for (int i = cards.length -1; i > 0; i--)
+	       {
+	          int index = rnd.nextInt(i + 1);
+	          // Simple swap
+	          Card temp = cards[index];
+	          cards[index] = cards[i];
+	          cards[i] = temp;
+
+	       }
+	       return cards;
+	   }
+
+
+	
 	/**
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
 		frame = new JFrame();
-		frame.setBounds(100, 100, 1090, 507);
+		frame.setBounds(100, 100, 1090, 766);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		JMenuBar menuBar = new JMenuBar();
@@ -141,6 +292,17 @@ public class BakersDozenUI {
 		menuBar.add(horizontalGlue_2);
 		
 		JButton btnStartPause = new JButton("Start/Pause");
+		btnStartPause.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if(timer.isRunning()) {
+					timer.stop();
+					bdboard.setEnabled(false);
+				}else {
+					timer.start();
+					bdboard.setEnabled(true);
+				}
+			}
+		});
 		btnStartPause.setFont(new Font("Dialog", Font.PLAIN, 19));
 		menuBar.add(btnStartPause);
 		
@@ -152,236 +314,7 @@ public class BakersDozenUI {
 		btnUndo.setFont(new Font("Dialog", Font.PLAIN, 19));
 		menuBar.add(btnUndo);
 		
-		JPanel finalStacksPanel = new JPanel();
-		frame.getContentPane().add(finalStacksPanel, BorderLayout.NORTH);
 		
-		JLabel finalStack1 = new JLabel("");
-		finalStack1.setIcon(new ImageIcon(BakersDozenUI.class.getResource("/Images/Solitaire.png")));
-		finalStacksPanel.add(finalStack1);
-		
-		JLabel finalStack2 = new JLabel("");
-		finalStack2.setIcon(new ImageIcon(BakersDozenUI.class.getResource("/Images/Solitaire.png")));
-		finalStacksPanel.add(finalStack2);
-		
-		JLabel finalStack3 = new JLabel("");
-		finalStack3.setIcon(new ImageIcon(BakersDozenUI.class.getResource("/Images/Solitaire.png")));
-		finalStacksPanel.add(finalStack3);
-		
-		JLabel finalStack4 = new JLabel("");
-		finalStack4.setIcon(new ImageIcon(BakersDozenUI.class.getResource("/Images/Solitaire.png")));
-		finalStacksPanel.add(finalStack4);
-		
-		JPanel panel_1 = new JPanel();
-		frame.getContentPane().add(panel_1, BorderLayout.CENTER);
-		panel_1.setLayout(new GridLayout(4, 13, 0, -400));
-		
-		JLabel label_1 = new JLabel("");
-		label_1.setIcon(new ImageIcon(BakersDozenUI.class.getResource("/Images/card_back_smallest.png")));
-		panel_1.add(label_1);
-		
-		JLabel label_2 = new JLabel("");
-		label_2.setIcon(new ImageIcon(BakersDozenUI.class.getResource("/Images/card_back_smallest.png")));
-		panel_1.add(label_2);
-		
-		JLabel label_7 = new JLabel("");
-		label_7.setIcon(new ImageIcon(BakersDozenUI.class.getResource("/Images/card_back_smallest.png")));
-		panel_1.add(label_7);
-		
-		JLabel label_6 = new JLabel("");
-		label_6.setIcon(new ImageIcon(BakersDozenUI.class.getResource("/Images/card_back_smallest.png")));
-		panel_1.add(label_6);
-		
-		JLabel label_9 = new JLabel("");
-		label_9.setIcon(new ImageIcon(BakersDozenUI.class.getResource("/Images/card_back_smallest.png")));
-		panel_1.add(label_9);
-		
-		JLabel label_8 = new JLabel("");
-		label_8.setIcon(new ImageIcon(BakersDozenUI.class.getResource("/Images/card_back_smallest.png")));
-		panel_1.add(label_8);
-		
-		JLabel label_5 = new JLabel("");
-		label_5.setIcon(new ImageIcon(BakersDozenUI.class.getResource("/Images/card_back_smallest.png")));
-		panel_1.add(label_5);
-		
-		JLabel label_10 = new JLabel("");
-		label_10.setIcon(new ImageIcon(BakersDozenUI.class.getResource("/Images/card_back_smallest.png")));
-		panel_1.add(label_10);
-		
-		JLabel label_4 = new JLabel("");
-		label_4.setIcon(new ImageIcon(BakersDozenUI.class.getResource("/Images/card_back_smallest.png")));
-		panel_1.add(label_4);
-		
-		JLabel label_14 = new JLabel("");
-		label_14.setIcon(new ImageIcon(BakersDozenUI.class.getResource("/Images/card_back_smallest.png")));
-		panel_1.add(label_14);
-		
-		JLabel label_15 = new JLabel("");
-		label_15.setIcon(new ImageIcon(BakersDozenUI.class.getResource("/Images/card_back_smallest.png")));
-		panel_1.add(label_15);
-		
-		JLabel label_3 = new JLabel("");
-		label_3.setIcon(new ImageIcon(BakersDozenUI.class.getResource("/Images/card_back_smallest.png")));
-		panel_1.add(label_3);
-		
-		JLabel label_30 = new JLabel("");
-		label_30.setIcon(new ImageIcon(BakersDozenUI.class.getResource("/Images/card_back_smallest.png")));
-		panel_1.add(label_30);
-		
-		JLabel label_34 = new JLabel("");
-		label_34.setIcon(new ImageIcon(BakersDozenUI.class.getResource("/Images/card_back_smallest.png")));
-		panel_1.add(label_34);
-		
-		JLabel label_31 = new JLabel("");
-		label_31.setIcon(new ImageIcon(BakersDozenUI.class.getResource("/Images/card_back_smallest.png")));
-		panel_1.add(label_31);
-		
-		JLabel label_35 = new JLabel("");
-		label_35.setIcon(new ImageIcon(BakersDozenUI.class.getResource("/Images/card_back_smallest.png")));
-		panel_1.add(label_35);
-		
-		JLabel label_36 = new JLabel("");
-		label_36.setIcon(new ImageIcon(BakersDozenUI.class.getResource("/Images/card_back_smallest.png")));
-		panel_1.add(label_36);
-		
-		JLabel label_42 = new JLabel("");
-		label_42.setIcon(new ImageIcon(BakersDozenUI.class.getResource("/Images/card_back_smallest.png")));
-		panel_1.add(label_42);
-		
-		JLabel label_40 = new JLabel("");
-		label_40.setIcon(new ImageIcon(BakersDozenUI.class.getResource("/Images/card_back_smallest.png")));
-		panel_1.add(label_40);
-		
-		JLabel label_33 = new JLabel("");
-		label_33.setIcon(new ImageIcon(BakersDozenUI.class.getResource("/Images/card_back_smallest.png")));
-		panel_1.add(label_33);
-		
-		JLabel label_32 = new JLabel("");
-		label_32.setIcon(new ImageIcon(BakersDozenUI.class.getResource("/Images/card_back_smallest.png")));
-		panel_1.add(label_32);
-		
-		JLabel label_49 = new JLabel("");
-		label_49.setIcon(new ImageIcon(BakersDozenUI.class.getResource("/Images/card_back_smallest.png")));
-		panel_1.add(label_49);
-		
-		JLabel label_28 = new JLabel("");
-		label_28.setIcon(new ImageIcon(BakersDozenUI.class.getResource("/Images/card_back_smallest.png")));
-		panel_1.add(label_28);
-		
-		JLabel label_48 = new JLabel("");
-		label_48.setIcon(new ImageIcon(BakersDozenUI.class.getResource("/Images/card_back_smallest.png")));
-		panel_1.add(label_48);
-		
-		JLabel label_16 = new JLabel("");
-		label_16.setIcon(new ImageIcon(BakersDozenUI.class.getResource("/Images/card_back_smallest.png")));
-		panel_1.add(label_16);
-		
-		JLabel label_13 = new JLabel("");
-		label_13.setIcon(new ImageIcon(BakersDozenUI.class.getResource("/Images/card_back_smallest.png")));
-		panel_1.add(label_13);
-		
-		JLabel label_23 = new JLabel("");
-		label_23.setIcon(new ImageIcon(BakersDozenUI.class.getResource("/Images/card_back_smallest.png")));
-		panel_1.add(label_23);
-		
-		JLabel label_26 = new JLabel("");
-		label_26.setIcon(new ImageIcon(BakersDozenUI.class.getResource("/Images/card_back_smallest.png")));
-		panel_1.add(label_26);
-		
-		JLabel label_38 = new JLabel("");
-		label_38.setIcon(new ImageIcon(BakersDozenUI.class.getResource("/Images/card_back_smallest.png")));
-		panel_1.add(label_38);
-		
-		JLabel label_27 = new JLabel("");
-		label_27.setIcon(new ImageIcon(BakersDozenUI.class.getResource("/Images/card_back_smallest.png")));
-		panel_1.add(label_27);
-		
-		JLabel label_39 = new JLabel("");
-		label_39.setIcon(new ImageIcon(BakersDozenUI.class.getResource("/Images/card_back_smallest.png")));
-		panel_1.add(label_39);
-		
-		JLabel label_37 = new JLabel("");
-		label_37.setIcon(new ImageIcon(BakersDozenUI.class.getResource("/Images/card_back_smallest.png")));
-		panel_1.add(label_37);
-		
-		JLabel label_43 = new JLabel("");
-		label_43.setIcon(new ImageIcon(BakersDozenUI.class.getResource("/Images/card_back_smallest.png")));
-		panel_1.add(label_43);
-		
-		JLabel label_44 = new JLabel("");
-		label_44.setIcon(new ImageIcon(BakersDozenUI.class.getResource("/Images/card_back_smallest.png")));
-		panel_1.add(label_44);
-		
-		JLabel label_47 = new JLabel("");
-		label_47.setIcon(new ImageIcon(BakersDozenUI.class.getResource("/Images/card_back_smallest.png")));
-		panel_1.add(label_47);
-		
-		JLabel label_46 = new JLabel("");
-		label_46.setIcon(new ImageIcon(BakersDozenUI.class.getResource("/Images/card_back_smallest.png")));
-		panel_1.add(label_46);
-		
-		JLabel label_50 = new JLabel("");
-		label_50.setIcon(new ImageIcon(BakersDozenUI.class.getResource("/Images/card_back_smallest.png")));
-		panel_1.add(label_50);
-		
-		JLabel label_45 = new JLabel("");
-		label_45.setIcon(new ImageIcon(BakersDozenUI.class.getResource("/Images/card_back_smallest.png")));
-		panel_1.add(label_45);
-		
-		JLabel label_24 = new JLabel("");
-		label_24.setIcon(new ImageIcon(BakersDozenUI.class.getResource("/Images/card_back_smallest.png")));
-		panel_1.add(label_24);
-		
-		JLabel label_41 = new JLabel("");
-		label_41.setIcon(new ImageIcon(BakersDozenUI.class.getResource("/Images/card_back_smallest.png")));
-		panel_1.add(label_41);
-		
-		JLabel label_25 = new JLabel("");
-		label_25.setIcon(new ImageIcon(BakersDozenUI.class.getResource("/Images/card_back_smallest.png")));
-		panel_1.add(label_25);
-		
-		JLabel label_22 = new JLabel("");
-		label_22.setIcon(new ImageIcon(BakersDozenUI.class.getResource("/Images/card_back_smallest.png")));
-		panel_1.add(label_22);
-		
-		JLabel label_29 = new JLabel("");
-		label_29.setIcon(new ImageIcon(BakersDozenUI.class.getResource("/Images/card_back_smallest.png")));
-		panel_1.add(label_29);
-		
-		JLabel label_21 = new JLabel("");
-		label_21.setIcon(new ImageIcon(BakersDozenUI.class.getResource("/Images/card_back_smallest.png")));
-		panel_1.add(label_21);
-		
-		JLabel label_12 = new JLabel("");
-		label_12.setIcon(new ImageIcon(BakersDozenUI.class.getResource("/Images/card_back_smallest.png")));
-		panel_1.add(label_12);
-		
-		JLabel label_20 = new JLabel("");
-		label_20.setIcon(new ImageIcon(BakersDozenUI.class.getResource("/Images/card_back_smallest.png")));
-		panel_1.add(label_20);
-		
-		JLabel label_11 = new JLabel("");
-		label_11.setIcon(new ImageIcon(BakersDozenUI.class.getResource("/Images/card_back_smallest.png")));
-		panel_1.add(label_11);
-		
-		JLabel label = new JLabel("");
-		label.setIcon(new ImageIcon(BakersDozenUI.class.getResource("/Images/card_back_smallest.png")));
-		panel_1.add(label);
-		
-		JLabel label_19 = new JLabel("");
-		label_19.setIcon(new ImageIcon(BakersDozenUI.class.getResource("/Images/card_back_smallest.png")));
-		panel_1.add(label_19);
-		
-		JLabel label_17 = new JLabel("");
-		label_17.setIcon(new ImageIcon(BakersDozenUI.class.getResource("/Images/card_back_smallest.png")));
-		panel_1.add(label_17);
-		
-		JLabel label_18 = new JLabel("");
-		label_18.setIcon(new ImageIcon(BakersDozenUI.class.getResource("/Images/card_back_smallest.png")));
-		panel_1.add(label_18);
-		
-		JLabel lblNewLabel = new JLabel("");
-		lblNewLabel.setIcon(new ImageIcon(BakersDozenUI.class.getResource("/Images/card_back_smallest.png")));
-		panel_1.add(lblNewLabel);
 	}
 
 }
